@@ -1,0 +1,36 @@
+.dowebok { 
+	display: none;
+	position: relative; 
+	width: 500px; height: 815px;
+	z-index: 666;
+}
+.dowebok img { 
+	position: absolute; 
+	left: 0px; top: 0px;
+	width: 500px; height: 815px;
+}
+#redux { position: absolute; 
+	left: 0px; top: 230px; 
+	z-index: 667;
+}
+.span_text {
+	position: absolute; 
+	color: white;
+	font-size: 20px;
+}
+#span_show_tips {			
+	left: 65px; top: 440px;
+	z-index: 669;
+}
+#span_tips {
+	display: none;
+	left: 65px; top: 480px;
+	line-height: 1.4em;
+}
+#div_mask_protect {
+	width: 500px; height: 585px;
+	background-color: rgba(255,0,255,0);
+	position: absolute; 
+	left: 0px; top: 309px; 
+	z-index: 668;
+}

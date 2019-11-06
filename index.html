@@ -1,137 +1,1065 @@
-<html>
-    <head>
+<!DOCTYPE html>
+
+<html lang="zh_cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>甜甜，生日快乐</title>
+
+    <script>
+        //判断客户端设备，选择写入meta
+        function init_viewport(){
+            if(navigator.userAgent.indexOf('Android') != -1){
+                var version = parseFloat(RegExp.$1);
+                if(version>2.3){
+                    var width = window.outerWidth == 0 ? window.screen.width : window.outerWidth;
+                    var phoneScale = parseInt(width)/500;
+                    document.write('<meta name="viewport" content="width=500, minimum-scale = '+ phoneScale +', maximum-scale = '+ phoneScale +', target-densitydpi=device-dpi">');
+                }else{
+                    document.write('<meta name="viewport" content="width=500, target-densitydpi=device-dpi, user-scalable=0">');    
+                }
+            }else if(navigator.userAgent.indexOf('iPhone') != -1){
+                var phoneScale = parseInt(window.screen.width)/500;
+                document.write('<meta name="viewport" content="width=500, min-height=750, initial-scale=' + phoneScale +', maximum-scale='+phoneScale+', user-scalable=0" /> ');         //0.75   0.82
+            }else{
+                document.write('<meta name="viewport" content="width=500, height=750, initial-scale=0.64" /> ');         //0.75   0.82
+            }
+        }
+        init_viewport();
+
+        document.ontouchmove = function(e){ //阻止默认的移屏事件
+            e.preventDefault();
+        } 
+    </script><meta name="viewport" content="width=500, height=750, initial-scale=0.64">   
+
+    <!-- <meta name="viewport" content="width=500, min-height=750, initial-scale=0.75, maximum-scale=0.75, user-scalable=0">     -->
+
+    <style>
+        *{
+            padding: 0px;
+            margin: 0px;
+            -webkit-box-sizing: border-box;
+        }
+        body{
+            /*width: 500px; height: 815px;*/
+            background-color: white;
+        }
+        #div_play_container{
+            width: 500px;
+            height: 815px;
+            position: absolute;
+            overflow: hidden;
+        }
+        #div_play_container > div,#div_play_container >img{
+            position: absolute;
+        }
+    </style>
+
+    <!-- 此模板的主要动画css -->
+    <link rel="stylesheet" type="text/css" href="./res/templet_11_ani.css">
+    
+    <style>
+        #control_area{
+            display:block;
+            /*width:100px; height:720px;*/
+            position:relative;            
+            color:white; text-shadow:1px 1px 1px #000;
+            z-index:999;
+        }
+        #div_back{
+            position: absolute;
+            text-align: center;
+            width: 40px; height: 150px;
+            top: 380px; right: 0px;            
+            font: 24px '微软雅黑';
+            background: #A03333;
+            border-top-left-radius: 20px; border-bottom-left-radius: 20px;
+            filter: alpha(opacity:70); opacity: 0.7;
+        }
+        #div_confirm{
+            position: absolute;
+            text-align: center;
+            width: 40px; height: 150px;
+            top: 560px; right: 0px;            
+            font: 24px '微软雅黑';
+            background: #A03333;
+            border-top-left-radius: 20px; border-bottom-left-radius: 20px;
+            filter: alpha(opacity:70); opacity: 0.7;
+        }
+        #div_record{
+            display: none;
+            position: absolute;
+            right: 20px; top: 90px;         
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: 3px solid;
+            font-size: 18px;
+            line-height: 45px;
+            text-align: center;
+            -webkit-animation:record_bling 2s linear infinite alternate;
+        }
+        #div_music{
+            position: absolute;
+            right: 20px; top: 30px;
+            z-index: 50;
+            visibility: visible;
+        }
+        #div_music_tips{
+            color:white;
+            position:absolute;
+            right:35px; top:15px;
+            width:60px
+        }
+
+        @-webkit-keyframes music_play_rotate{
+            0%{
+                -webkit-transform:rotate(0deg);
+            }
+            100%{
+                -webkit-transform:rotate(360deg);
+            }
+        }
+        @-webkit-keyframes record_bling{
+            0%  {
+                -webkit-transform:rotate(0deg);
+            }
+            40% {
+                -webkit-transform:rotate(0deg);
+            }
+            50% {
+                -webkit-transform:rotate(30deg);
+            }
+            60% {
+                -webkit-transform:rotate(0deg);
+            }
+            70% {
+                -webkit-transform:rotate(30deg);
+            }
+            80% {
+                -webkit-transform:rotate(0deg);
+            }
+            100% {
+                -webkit-transform:rotate(0deg);
+            }
+        }
+        @-webkit-keyframes text_bling{
+            from  {
+                -webkit-transform: scale(1);
+            }
+            to    {
+                -webkit-transform: scale(1.1);
+            }
+        }
+
+        #div_text {
+            visibility:visible;
+            text-align:left;
+            line-height:26px;
+            font: 25px "Microsoft YaHei","微软雅黑","Arial";
+            /*letter-spacing: 3px;*/
+            text-shadow:2px 2px 5px #000;
+            color:#fff;
+            position:fixed;
+            bottom:25px; left:50px;
+            width:80%; height:60px;
+            z-index:1999;
+            -webkit-animation:text_bling 1s linear infinite alternate;
+        }
+
+        #div_start_bg{
+            width: 100%; height: 100%;
+            position: absolute;
+            left: 0px; top: 0px;
+            z-index: 44;
+            background-color: white;
+        }
+
+        #div_go_custom{
+            position: absolute;
+            right: 20px; top: 200px; 
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            border: 3px solid;            
+            font-size: 18px;
+            line-height: 45px;
+            text-align: center;
+            /*-webkit-animation:record_bling 2s linear infinite alternate;*/
+        }
+        #div_go_custom>a {
+            text-decoration: none;
+            color: white;
+        }
+    </style>
+
+    <!-- 擦除公式的css -->
+    <link rel="stylesheet" type="text/css" href="./res/formula.css">
+
+    <!-- 爱的种子的css -->
+    <link type="text/css" rel="stylesheet" href="./res/tree_main.css">
+
+</head>
 
 
-    </head>
-    <body style="background-color:pink;">
-        <h1><p style="text-align:center;color:purple">I Love You! 糖糖 </p></h1>
+<body style="">
+    <div id="div_play_container">
+        <div class="dowebok">
+            <img src="./res/blackboard.jpg" alt="">
+            <img id="redux" src="./res/up_half.jpg" alt="">
+            <span class="span_text" id="span_show_tips">点击查看提示</span>
+            <span class="span_text" id="span_tips">动动手指，抹掉公式的上半部分试试</span>
+            <div id="div_mask_protect"></div>
+        </div>
 
-        <h1><p style="text-align:center;color:purple">editor by u 狗子</p></h1>                     <canvas id="c"></canvas>
-        <script>
-var b = document.body;
-var c = document.getElementsByTagName('canvas')[0];
-var a = c.getContext('2d');
-document.body.clientWidth;</script>
+        <div id="div_tree_play" style="display: block;">
+            <div id="error">很可惜你的手机浏览器不支持，错过了惊喜效果哦</div>
+            <div id="div_tree_start"></div>
+            <div id="div_tree_main">
+                <div id="div_tree_text">
+                    <!-- <div id="clock-box"> 
+                        我们已经相爱
+                        <span id="clock"></span>
+                    </div> -->
+                    <div id="div_tree_type"></div>                
+                </div> 
+                <canvas id="canvas_tree" width="500" height="815"></canvas>
+            </div>
+        </div>
+
+        <!-- <div id="div_pixels_play">
+            <canvas class="canvas_pixels"></canvas>
+        </div> -->
+
+        <div id="div_start_bg"></div>
+
+        <!-- 以上是动画和视频片头 -->
 
 
-        <script>
-with (m = Math)
-    C = cos, S = sin, P = pow, R = random;
-c.width = c.height = f = 613;
-h = -250;
-function p(a, b, c) {
-    if (c > 60)
-        return [ S(a * 7) * (13 + 5 / (.2 + P(b * 4, 4))) - S(b) * 50,
-                b * f + 50,
-                625 + C(a * 7) * (13 + 5 / (.2 + P(b * 4, 4))) + b * 400,
-                a * 1 - b / 2, a ];
-    A = a * 2 - 1;
-    B = b * 2 - 1;
-if(A*A+B*B<1){if(c>37){n=(j=c&1)?6:4;o=.5/(a+.01)+C(b*125)*3-a*300;w=b*h;return[o*C(n)+w*S(n)+j*610-390,o*S(n)-w*C(n)+550-j*350,1180+C(B+A)*99-j*300,.4-a*.1+P(1-B*B,-h*6)*.15-a*b*.4+C(a+b)/5+P(C((o*(a+1)+(B>0?w:-w))/25),30)*.1*(1-B*B),o/1e3+.7-o*w*3e-6]}if(c>32){c=c*1.16-.15;o=a*45-20;w=b*b*h;z=o*S(c)+w*C(c)+620;return[o*C(c)-w*S(c),28+C(B*.5)*99-b*b*b*60-z/2-h,z,(b*b*.3+P((1-(A*A)),7)*.15+.3)*b,b*.7]}o=A*(2-b)*(80-c*2);w=99-C(A)*120-C(b)*(-h-c*4.9)+C(P(1-b,7))*50+c*2;z=o*S(c)+w*C(c)+700;return[o*C(c)-w*S(c),B*99-C(P(b, 7))*50-c/3-z/1.35+450,z,(1-b/1.2)*.9+a*.1, P((1-b),20)/4+.05]}}setInterval('for(i=0;i<1e4;i++)if(s=p(R(),R(),i%46/.74)){z=s[2];x=~~(s[0]*f/z-h);y=~~(s[1]*f/z-h);if(!m[q=y*f+x]|m[q]>z)m[q]=z,a.fillStyle="rgb("+~(s[3]*h)+","+~(s[4]*h)+","+~(s[3]*s[3]*-80)+")",a.fillRect(x,y,1,1)}',0)</script>
-    <h3><p style="float:right;color:green"/p></h3>
-	
-	
-	<code><span style="display:block;line-height:8px; font-size: 8px; font-weight:bold;white-space:pre;font-family: monospace;color: black; background: white;">                                                                          .*(#%(/..  ../#%#*,                                                                  
-                                                                            ./#%%/,.   ,/##(*.                                                                 
-                                                                              ./#%#*.  .,/##(*.                                                                
-                                                             .,*//((((#((((//,..,(%#/.. .,/##(*.                                                               
-                                                           .*(######((((##%%%##(/(#%%/,. .*(##/,                                                               
-                                                          .*(#(/*,,,,...,,,*/((###%&/,..,/##(,.                                                              
-                                                          .*(%#*.           ..,**/(%&%#/,..*(##*,                                                              
-                                                           ,/#%#(/*****,,,...   ..,*/#%#/..,/##/,                                                              
-                                                            .*/((#######(((//**,,,.,,/#%#*,*/##(*.                                                             
-                                                              .,*/(##%%&&&&%%%##(((((##%%#((#%%#/,..                                                           
-                                                        .,,**//(((############(((((((((((#########((/**,..                                                     
-                                                   ..,*/(##%%###((//***,,,,,,............,,,,***/((##%##(//*,.                                                 
-                                                .,*(#%%%#(/**,,..                                ..,,*/(#%%%#/*..                                              
-                                              .*(#%%#(/*,.            ........................          .,*(#%%#(*,                                            
-                                           .,/(%#(/*,.     ............................................    ..*/(###(*.                                         
-                                         .*(###/*,.   .....................................................  ..,*/(##(/.                                       
-                                       .*(%%#/*..   .........................................................    .,*(##(/,                                     
-                                     .,(##(*,..  ...............................................................   .,*(##(/.                                   
-                                    ./(%#/,.   ....................................................................  .,*(%%(*.                                 
-                                  .*/##(*.   .......................................................................   .,/#%%/,                                
-                                 .*(##(,.  ...........................................................................  ..*(%%(,.                              
-                                .*(##/,.  ..............................................................................  .,/%%(*.                             
-                               .*(##/,.  .................................................................................  ./#%#*.                            
-                              .*/##/,.  ...................................................................................  .*#%(/.                           
-                              ,/(#(*.  .....................................................................................  .*(%#*.                          
-                             .*(#(/,.  ......................................................................................  .*##(*.                         
-                             ,/##/*.  .......................................................................................   ./(#(,.                        
-                            .*(##*,   ...................................................................      ...............  .*/##/,                        
-                            ./(#(*.  ................................................................     ....        .........  .*(#(/.                       
-                            ,/((/,.  .............................................................  ...,,******,,,,....  ......  .,/(#(*.                      
-                           .,(#(*,.  ........................................................... ...,/((###((((((((//*,..  .....  .*/##*,                      
-                           .*((/*..  .........................................................  ..*(#%#(/********//((#(/*,.  ...  .,*(#/,                      
-                           ,*((/*..  ........................................................  .,/(%#/,..       ....,*/##(/,.      .*(#(*.                     
-                           ,/((*,.  ........................................................  .,*(#(*.    .....       .,/#%(/..    .,/((/,                     
-                           ,/((/,.  .......................................................  ..*/#(*.   .............  ..,/%%/,.   .,/((/,.                    
-                           ,/((/,.  .......................................................  ..*(#(,.  ................  .,/##(,.   ./(#(,.                    
-                           ,*((/*..  ......................................................  ..*/#(*.   ................  .,/%%/,.  .*(#(*.                    
-                           .*((/*..  ........................    ..................    .....  .,*(#(*.  .................  .,#%(/.. .*(#(*.                    
-                           .*((/*..  ........................................................  .,/(#(*.   ................  ./##(,. .*/#(*.                    
-                           .,(#(*..  .................... ..,*//*,................,*///,,.. ..  .,*(##/,.     ............  .,/#(*...*/#(*.                    
-                            ,(#(/,.  ..................   .,/%%&%(*..  .......  .,/%%&%#/,.  ..  ..,/##(/,,....   ........   ,*##/,..*(#(*.                    
-                            ,/(#(,.  ..................  ..*(&&&&%(,.  ......  ..*#&&&&%#*,.  ...   .,*(##(/*,,...........   ,/##/,.,*(#(*.                    
-                            ./(#(*.  ..................  .,/#%&&&%(*.  ......  .,/#&&&&%#/*..  ....    .*(%%%##((/*,.  ...   ,*#%(*,,/((/,.                    
-                            .*(##*,   .................  ../#%&&&%(*.  ......  ../#&&&&%#/*..  ......   ,(##(//(((/*,.  ...  .*#%(*,,/((/.                     
-                             ,*##/,.  .................  ..*/%&&/,.           .*(%&&&%(*,.  .......  .,(%#/,.............  .,(#(/,*(((*.                     
-                             ,/##/,.  ..................  ..,/#%#/,. ........    .,/#%%(*..  ........  .*#%(*..     .......  .,(##/*/((/,                      
-                            .*(#(*,  .........................,,,..,*/((((((//*,.. .,,,.............   ./%%/*..  ..........  .,(##(//((/,                      
-                            ,/(#(,.  ......................    .,*/##%%#####%%##(/*..    ...........  .,/%%/,.  ...........  .,(##(//((*,                      
-                           .,(#(/,.  ....................  ..,*(#%%##(///////(##%%%(/*,.   ......... ..*(%#*,.  ...........  .,(##(/(((*,                      
-                           .*(#/*..  ......................,*(#%%#(/***********//(#%%#(*,..  ......  .,/#%#*.   ...........  .,(##(//((*,                      
-                           ,/((*,.  .................. ..,*(%%#(/******************/(#%#(*,.. .....  .,(%#(,.  ............  .,(#(///((/,                      
-                          .*/((*,.  .................  .,(#%#/**,*********************/###(*,. ...   .*#%(/..  ...........   .*##(/*/((/,                      
-                          .*((/,.   ................  .,*#%%(/***********************,,*(%#(/,.  .  .,/%%/*.. ............   ,*##(***((/,                      
-                          ./((/,.   ................  ..*(#%%%%%###(((((///////////////(#%%#(,.    ..*(%#*.. .............  .,/##/,,*((/*.                     
-                          .*/((*,.  .....................,,*/((###%%%%%%%%%%%%%%%%%%%%%%%%#/*..    .,(#%(,.  .............  .*(%#*,,*(#/*                      
-                           ,*(#/*..  ...................    ...,,,****///////////////////*,......  .*#%#/.   .............  ./#%#*,*/##/,                      
-                            ,(##(,.  ......................           ...................   .... ..,/%%(*.  .............   .(%#/,,/(#(*.                      
-                            .*/##/*.   ...........................                       ......  .,*(%#*,. ..............  .*#%(///##/*.                       
-                             .,/(((/*,.     ................................................... ..,(#%(,.  .............  .,/%%%###(/,.                        
-                               .,(#%#(/,,...                    .  ..........................   .,*#%#/.  .............   .*(%&%%#(*.                          
-                               ,*(######((/**,,,,........           .                          ..*(%#/,.  .............  .,(%%#(/,.                            
-                             .,(##(*,,*/(######((((////********,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,**(#%(,.  .............  .,/%%(*.                               
-                            .*(##/*.   ..,*(#%%%###########%%###################################%%%#/.   ............   .*(%%*.                                
-                           .*(#(/,.  ..   .*(%#/,,,,,***////////(((((((######(###(###(####((((((###/,.  .............  .,(%&%/.                                
-                          .*(##/,.  ...   .(%#(,.                    ......................    .,,,..  ............  ..,/#&&%(*.                               
-                          ,(##(,.  ....  .,#%#/,.  ............                                     ...............  .,/#%%###(,                               
-                         .*##(*..  ....  .,#%#/,.  ...............................................................  .,*#%#/*/##*.                              
-                         ,/##/*..  ....  .,#%#/,.  ..............................................................  .,/#%#/,,/##*.                              
-                         ,/##/,.  .....  .,#%#(,.  ..............................................................  .,(##/,.*(#(,.                              
-                         ,/##/,.  .....   ,(%%(*.   ............................................................. ..,***,.,(##/,                               
-                         ./##/*..  .....  ./#%#*,.  ...................................................................  .,#%(*.                               
-                         .*##(/,.  .....   ,/%%(*..  ................................................................   .*/%%*.                                
-                          ,(##(,.  ......  .,(%#(*..  ..............................................................   .,(##/.                                 
-                          .*(##/,.  ......  .*(%%(*..  ............................................................  ..*(%%/,                                  
-                           .*(#(/,.  ......  .,(%%#/,.   ........................................................  ..,/#%#/.                                   
-                            .*(#(*,   ......  .,*(##(*,.   ...................................................   ..*/%%%(,.                                    
-                             .,(((/,.   ......  .,/###(*,.     ...........................................     .,/(#%#(*.                                      
-                               ,/(#(/,.    ....  ..,*(###/*,.      ....................................    ..,*/(##(/,.                                        
-                                .*(##(/,..          .,*(%%%(/**,...        ....................        ...,/(###(/*..                                          
-                                 .,/(%%#(**,........,*/##%%%%%#((/*,,......                     ......,*/(#%%%%(*.                                             
-                                   .,/(#####((//////(((((((#%####%###(//***,,,.............,,,,***//((#%%##((##(/.                                             
-                                      .,*//########((/*,*/##(**/(%%%%########((((((((((((((((#########%%%#/**/##(*.                                            
-                                           ..,,,,,,..  ,*#%#(*,/(%%(/**//((((#################(((//***/#%#(**/(##/*.                                           
-                                                     ..*(%%(/**(%%#/,,,,,,,,,,*************,,,,,,,,,.,*(#%#/**/###(*.                                          
-                                            ......,**/(#%%%(**/#%%(*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,/(%%(/*/(#%%#(/*,,....                                  
-                                        ...,,,,,*(#%%%%%#((/***(#%%(*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*/#%%#/***/(##%%%%%#/*,.....                              
-                                     ..,,,,,,,*(#%%##(///*******/#%#(*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,/(%%(/********//(#%%%#/*,,,,..                            
-                                   ..,,,,,,,,/(%%#(/**********,**(#%(/*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*(#%%/*************/(#%#(*,,,,,..                          
-                                  ..,,,,,,,,*(%%#(/*************/#%#(**,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,/#%%(/*************/#%%#/,,,,,,..                         
-                                  ..,,,,,,,,*(#%%###(((((((((((##%%(/*,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*/#%%##(((((((((((##%%%#*,,,,,,..                         
-                                   ..,,,,,,,,*/((################(/**,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,*/(#################(/*,,,,,,,.                          
-                                    ..,,,,,,,,,,******////////***,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,***///////////****,,,,,,,..                           
-                                      ...................,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,...                             
-                                              ...........,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.....                                
-                                                .. ... ..,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,......                                     
-                                                         ....,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,........                                            
-                                                               ..........................................                                                      
-                                                                                                                                                               
-                                                                                                                                                               
-                                                                                                                                                               
-                                                                                                                                                               
-</span></code>
-    </body>
-</html>
+
+
+
+
+        <img src="./res/beijing.jpg">
+
+        <div id="page1" class="page">
+            <div id="div1h" class="divh" style="display: none;">
+                <img id="img1h" class="img" style="left: 0px; width: 480px; height: 475px; top: -77.5px;">
+                <span id="word1h" class="showwords" style="top: 95%;"></span>
+            </div>
+            <div id="div1v" class="divv" style="display: block;">
+                <img id="img1v" class="img" style="top: 0px; height: 600px; width: 438.356px; left: -9.17808px;">
+                <span id="word1v" class="showwords" style="top: 88%;"></span>
+            </div>
+        </div>        
+
+        <div id="page2" class="page">
+            <div id="div2h" class="divh" style="display: block;">
+                <img id="img2h" class="img" style="left: 0px; width: 480px; height: 475px; top: -77.5px;">
+                <span id="word2h" class="showwords" style="top: 95%;"></span>
+            </div>
+            <div id="div2v" class="divv" style="display: none;">
+                <img id="img2v" class="img" style="left: 0px; width: 420px; height: 637px; top: -18.5px;">
+                <span id="word2v" class="showwords" style="top: 88%;"></span>
+            </div>
+        </div>
+
+        <img id="ying1h" class="yingh" src="./res/ying.png" style="display: none; animation: ying_x_out 1s ease both;">
+        <img id="ying1v" class="yingv" src="./res/ying.png">
+
+        <img id="ying2h" class="yingh" src="./res/ying.png">
+        <img id="ying2v" class="yingv" src="./res/ying.png" style="display: none; animation: ying_y_in 1s ease 0.8s both;">
+
+        <img class="cake" src="./res/dangao.png">
+        <img class="flag" src="./res/caiqi.png">
+        <img class="flag1" src="./res/caiqi.png">
+        <img class="ban1" src="./res/1.png">
+        <img class="ban2" src="./res/2.png">
+        <img class="ban3" src="./res/2.png">
+
+        <img class="yingzi" src="./res/yingzi.png">
+        <img class="yingzi1" src="./res/yingzi.png">
+        <img class="xin3" src="./res/xing2.png">
+        <img class="xin4" src="./res/xing2.png">
+        <img class="xin1" src="./res/xing1.png">
+        <img class="xin2" src="./res/xing2.png">
+
+        <img class="huo1" src="./res/huomiao.png">
+        <img class="huo2" src="./res/huomiao.png">
+        <img class="huo3" src="./res/huomiao.png">
+        <img class="huo4" src="./res/huomiao.png">
+
+        <div id="pagetitle" style="position: absolute; width: 500px; height: 250px; top: 266px; left: 0px;">
+            <div id="titlebg" style="animation: titlebg 2s linear both;">
+            </div>
+            <div id="heng1" style="animation: changeline 2s linear both;">
+                <img id="xian1" src="./res/heng.png">
+            </div>
+            <div id="heng2" style="animation: changeline 2s linear both;">
+                <img id="xian2" src="./res/heng.png">
+            </div>
+            <div id="heng3" style="animation: changeline 2s linear both;">
+                <img id="xian3" src="./res/heng.png">
+            </div>
+            <div id="heng4" style="animation: changeline 2s linear both;">
+                <img id="xian4" src="./res/heng.png">
+            </div>
+            <div style="position:absolute;width:344px;height:150px;top:55px;left:72px;overflow:hidden;display:table;">
+                    <div id="titlecontent" style="width: 344px; height: 150px; vertical-align: middle; display: table-cell; text-align: center; font-size: 27px; line-height: 40px; color: rgb(255, 255, 255); animation: fadein 1.5s linear 0.5s both;">甜甜，生日快乐</div>
+            </div> 
+        </div>
+
+    </div>
+
+
+
+
+
+
+    <!-- 以上为动画主体播放部分，以下为控制区及文字 -->
+    <!-- <link rel="stylesheet" type="text/css" href="css/buttons.css" /> -->
+    <!-- <script type="text/javascript" src="js/xmlHttp.js"></script> --> 
+
+    <div id="div_text" class="large green button"></div>
+
+    <div id="control_area">
+        <div id="div_music" onclick="music_switch()">
+            <img id="image_music" src="./res/music_note_big.png" style="-webkit-animation:music_play_rotate 1s linear infinite">
+            <div id="div_music_tips"></div>
+            <audio src="http://updataa.jiatuma.com/0122/1516551249652424.mp3" id="audio_music" autoplay="autoplay" loop="loop">
+                <source src="http://updataa.jiatuma.com/0122/1516551249652424.mp3" type="audio/mpeg">                
+                您的浏览器不支持播放音乐
+            </audio>
+        </div> 
+
+     
+    </div>
+
+
+
+
+    
+
+    <!-- 以下是自己新增的js控制 -->
+    <script type="text/javascript" src="./res/jquery-2.0.3.min.js"></script> 
+    <script src="./res/jweixin-1.2.0.js"></script>
+    <script>
+        var music_audio=document.getElementById('audio_music');
+        // 以下为微信接口的相关js，让音乐最早出来
+        wx.config({
+            debug: false,
+            appId: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["appid"],
+            timestamp: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["timestamp"]+'',
+            nonceStr: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["nonceStr"],
+            signature: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["signature"],
+            jsApiList: [
+                'checkJsApi',
+                'onMenuShareTimeline',
+                'onMenuShareAppMessage'
+                // 'onMenuShareQQ',
+                // 'onMenuShareWeibo',
+                // 'onMenuShareQZone','
+                // 'closeWindow', 
+                // 'hideAllNonBaseMenuItem', 
+                // 'showMenuItems', 
+                // 'showAllNonBaseMenuItem'
+            ]
+        });
+
+        wx.ready(function(){
+            console.log('wx.ready success to start');
+            music_audio.play(); //触发音乐自动播放
+            init_wechat();
+        });
+
+        wx.error(function(res){
+            console.log('wx.error->'+res);
+            music_audio.play();                    
+            // config信息验证失败会执行error函数，如签名过期导致验证失败，具体错误信息可以打开config的debug模式查看，也可以在返回的res参数中查看，对于SPA可以在这里更新签名。
+        });
+
+        function init_wechat(){
+            wx.checkJsApi({
+                jsApiList: ['onMenuShareTimeline'], // 需要检测的JS接口列表，所有JS接口列表见附录2,
+                success: function(res) {
+                    console.log(res);
+                }
+            });
+            wx.onMenuShareTimeline({
+                title: '甜甜，生日快乐', // 分享标题
+                link: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["url"], // 分享链接
+                imgUrl: '[', // 分享图标
+                success: function () { 
+                    console.log('thanks for share');
+                }
+            });
+            wx.onMenuShareAppMessage({
+                title: '甜甜，生日快乐', // 分享标题
+                desc: '甜甜，生日快乐', // 分享描述
+                link: {"appid":"wxc8e39d54541e000b","timestamp":1571663013,"nonceStr":"aiHguuUPsFtowlIF","url":"http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi","signature":"226554c12432de3a887c352104067d9be5912d14","rawString":"jsapi_ticket=LIKLckvwlJT9cWIhEQTwfI0af0FXeoJ7a1oPnHIZ36r-ib_jb7jSRYGeUqtfbLIzE0zQg5UtSoMByCVDl69fpg&noncestr=aiHguuUPsFtowlIF&timestamp=1571663013&url=http:\/\/www.jiatuma.com\/Home\/Play\/play_show\/nt\/MyTugyO0O0Oi"}["url"], // 分享链接
+                imgUrl:'[', // 分享图标
+                type: '', // 分享类型,music、video或link，不填默认为link
+                dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+                success: function () { 
+                    console.log('thanks for share');
+                }
+            });
+        }        
+        init_wechat(); //触发wechat setting
+
+
+
+
+        //以下是其他琐碎的设置
+        $(function(){
+            console.log("music_loaded->http://updataa.jiatuma.com/0122/1516551249652424.mp3");
+            console.log("luyin_loaded->http://www.jiatuma.com/updataa/0201/15174893068033.mp3");
+            // console.log("http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!=null); 
+            // console.log("http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!='');
+            // console.log("http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!=''&&"http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!=null);
+
+            //允许标题为空
+            if(nt_title==''||nt_title==null){
+                document.title='\u200E';
+            }
+
+            //如果没有录音就不显示
+            if("http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!=''&&"http://www.jiatuma.com/updataa/0201/15174893068033.mp3"!=null){
+                $("#div_record").show();
+            }
+
+        });
+        
+        //所有DOM元素加载好了才执行
+        window.onload=function(){
+            //所有元素都加载好了再去加载音乐
+            // music_audio.src=music_url;
+            // music_audio.innerHTML='<source src="'+music_url+'" type="audio/mpeg"/>';
+        }
+
+        function go_confirm(){
+            window.location.href="/index.php/Home/Support/support_qa/nt/MyTugyO0O0Oi";
+        }
+
+        //控制音乐切换播放暂停
+        // var music_url = "http://updataa.jiatuma.com/0122/1516551249652424.mp3";
+        // var music_audio=document.getElementById('audio_music');
+        var image_music = document.getElementById('image_music');
+        function music_switch(){
+            if(music_audio.paused){
+                console.log('music_switch paused to play');
+                record_audio.pause();
+                music_audio.play();
+                image_music.style.webkitAnimation = "music_play_rotate 1s linear infinite";
+                document.getElementById("div_music_tips").innerHTML = "正播放";
+                document.getElementById("div_music_tips").style.visibility = "visible";
+                setTimeout(function(){document.getElementById("div_music_tips").style.visibility="hidden"}, 2500);
+            }else{
+                console.log('music_switch play to paused');               
+                music_audio.pause();
+                image_music.style.webkitAnimation = "";
+                document.getElementById("div_music_tips").innerHTML = "已暂停";
+                document.getElementById("div_music_tips").style.visibility = "visible";
+                setTimeout(function(){document.getElementById("div_music_tips").style.visibility="hidden"}, 2500);
+            }
+        }
+
+        //录音开关
+        var record_audio=document.getElementById('audio_record');
+        function record_switch(){ 
+            if (record_audio.paused){ 
+                record_audio.play();
+                music_switch();
+            }else{
+                record_audio.pause();
+                music_switch(); //表示录音已暂停，允许音乐播放
+            }   
+        }
+
+  
+    
+
+
+
+
+
+        //以下是图片文字的控制js
+        //按保存的数量取得图片数据 add img length to 14
+        var array_img_url = [];        
+        var imgs_length=5;
+        for(var x=0; x<imgs_length; x++){
+            var img_temp=[
+			"http:\/\/updataa.jiatuma.com\/0122\/1516551186571.jpeg",
+			"http:\/\/updataa.jiatuma.com\/0122\/1516551186424.jpeg",
+			"http:\/\/updataa.jiatuma.com\/0122\/1516551187383.jpeg",
+			"http:\/\/updataa.jiatuma.com\/0122\/1516551189632.jpeg",
+			"http:\/\/updataa.jiatuma.com\/0122\/1516551191492.jpeg"][x];
+            if(img_temp!=''&&img_temp!=null){
+                array_img_url.push(img_temp);
+            }
+        }
+        console.log(array_img_url);
+        
+        
+        var nt_title = "甜甜，生日快乐";
+        // var begin_titletime = new Date().getTime();
+        var begin_titletime;
+        function showtitle(){
+            begin_titletime = new Date().getTime();
+            id('heng1').style.webkitAnimation = 'changeline 2s linear both';
+            id('heng2').style.webkitAnimation = 'changeline 2s linear both';
+            id('heng3').style.webkitAnimation = 'changeline 2s linear both';
+            id('heng4').style.webkitAnimation = 'changeline 2s linear both';
+            id('titlebg').style.webkitAnimation = 'titlebg 2s linear both';
+            id('titlecontent').innerHTML = nt_title;
+            id('titlecontent').style.webkitAnimation = 'fadein 1.5s 0.5s linear both';
+        } 
+        // showtitle(); 
+
+        var image_size_width=[];
+        var image_size_height=[];
+        var image_url_index=0;
+        var have_num = 0;
+        var error_num = 0;
+        var Onload_imgs_url=[];
+
+        var timeout = [];
+        var delaytime=5000;
+
+        var words = {}; 
+
+        function load_images(){
+            console.log('load_images');
+            image_size_width=[];
+            image_size_height=[];            
+            image_url_index=0;
+            have_num = 0;
+            error_num = 0;
+            Onload_imgs_url=[];              
+
+            for(var i=0;i<array_img_url.length;i++) {
+            // for(var i=0;i<array_img_url.length;++i) {
+                preload_images(i);
+            }
+        }
+        // load_images();
+
+        function preload_images(image_index){
+            setTimeout(function(){
+                var img=new Image();
+                img.index=image_index;
+                console.log('image_index_'+image_index+'->'+array_img_url[image_index]);
+                img.src=array_img_url[image_index];
+                Onload_imgs_url[image_index] = 'loading';
+                img.onload = image_onload;
+                img.onerror = image_onerror;
+            },image_index*300);
+        }      
+
+        function image_onload(event){
+            console.log('image_onload');
+            var img = event.target;
+            var index = img.index;
+
+            if(index<16){
+                have_num++;
+            }
+            Onload_imgs_url[index] = img.src;
+            image_size_height[index] = img.height;
+            image_size_width[index] = img.width;
+
+            // console.log(Onload_imgs_url[index]);
+
+            if(have_num+error_num>=16 ||array_img_url.length==(have_num+error_num)){   
+                if(have_num == 0){
+                    return;
+                }
+                var end_titletime = new Date().getTime();
+                var dis_titletime = Math.abs(end_titletime-begin_titletime);
+                if(dis_titletime>delaytime){
+                    dis_title();
+                }else{
+                    dis_titletime = delaytime- dis_titletime;
+                    timeout[0] = setTimeout(function(){
+                        dis_title();
+                    },dis_titletime);
+                }
+            }
+        }
+
+        function image_onerror(event){
+            console.log('image_onerror');
+            var img = event.target;
+            var index = img.index;
+            if(index<16){
+                error_num ++;
+            }
+
+            Onload_imgs_url[index] = 'not find';
+            // console.log(Onload_imgs_url[index]);
+            if(have_num+error_num>=16 || array_img_url.length==(have_num+error_num)){   
+                if(have_num == 0){
+                    return;
+                }
+                var end_titletime = new Date().getTime();
+                var dis_titletime = Math.abs(end_titletime-begin_titletime);
+                if(dis_titletime>delaytime){
+                    dis_title();
+                }else{
+                    dis_titletime = delaytime- dis_titletime;
+                    timeout[0] = setTimeout(function(){
+                        dis_title();
+                    },dis_titletime);
+                }
+            }
+        }
+
+        function dis_title() {
+            console.log('dis_title');            
+            setImage('1');
+            id('pagetitle').style.webkitAnimation = 'fadeout 2s linear both';
+            id('page1').style.webkitAnimation = 'fadein 2s 2s ease both';
+            id('ying1h').style.webkitAnimation = 'ying_x_in 2s 2s ease both';
+            id('ying1v').style.webkitAnimation = 'ying_y_in 2s 2s ease both';
+            // show_text_loop();
+            setTimeout(show_text_loop,2000);
+            timeout[1] = setTimeout(show2,8000);
+        }
+
+        function setImage(idname){
+            console.log(image_url_index+' img url ->'+Onload_imgs_url[image_url_index]);
+            while(Onload_imgs_url[image_url_index] == 'not find' || Onload_imgs_url[image_url_index] == 'loading'){
+                image_url_index++;
+                if(image_url_index == Onload_imgs_url.length){
+                    image_url_index = 0;
+                }
+            }
+
+            var img_bili = image_size_width[image_url_index]/image_size_height[image_url_index];
+            var div;
+            var div1;
+            var divname;
+
+            if(img_bili > 1){
+                divname = idname + 'h';
+                div = id('div'+idname+'h');
+                div1 = id('div'+idname+'v');
+                width = 480;
+                height = 320;
+                id('ying'+idname + 'v').style.display = 'none';
+                id('ying'+idname + 'h').style.display = 'block';
+                
+                var word = id('word'+divname);
+                // word.style.color = "red";
+                word.style.top = "95%";
+            }else{
+                divname = idname + 'v';
+                div = id('div'+idname+'v');
+                div1 = id('div'+idname+'h');
+                width = 420;
+                height = 600;
+                id('ying'+idname + 'h').style.display = 'none';
+                id('ying'+idname + 'v').style.display = 'block';
+
+                var word = id('word'+divname);  //��
+                // word.style.color = "green";
+                word.style.top = "88%";
+            }
+            div.style.display = 'block';
+            div1.style.display = 'none';
+
+            var img = id('img'+divname);
+            img.src = Onload_imgs_url[image_url_index];
+            // console.log(img.src);
+
+            if(img_bili > (width/height)){
+                img.style.top = '0px';
+                img.style.height = height + 'px';
+                img.style.width = height*img_bili + 'px';
+                img.style.left = -((height*img_bili-width)/2)+'px';
+            }else{
+                img.style.left = '0px';
+                img.style.width = width+'px';
+                img.style.height = width/img_bili + 'px';
+                img.style.top = -((width/img_bili-height)/2) + 'px';
+            }
+
+            image_url_index++;
+            if(image_url_index==Onload_imgs_url.length){
+                image_url_index = 0;
+            }
+        }
+        
+
+        function show2() {
+            console.log('show2');
+            show_text_loop();
+            setImage('2');
+            id('page1').style.webkitAnimation = 'rotate_out_flip_x 1.5s ease both';
+            id('ying1h').style.webkitAnimation = 'ying_x_out 1.5s ease both';
+            id('ying1v').style.webkitAnimation = 'ying_x_out 1.5s ease both';
+            id('page2').style.webkitAnimation = 'rotate_in_flip_y 1.5s 1.5s ease both';
+            id('ying2v').style.webkitAnimation = 'ying_y_in 1.5s 1.5s ease both';
+            id('ying2h').style.webkitAnimation = 'ying_y_in 1.5s 1.5s ease both';
+            timeout[2] = setTimeout(show3,8000);
+        }
+
+        function show3(){
+            console.log('show3');
+            show_text_loop();
+            setImage('1');
+            id('page2').style.webkitAnimation = 'rotate_out_flip_y 1.5s ease both';
+            id('ying2h').style.webkitAnimation = 'ying_y_out 1.5s ease both';
+            id('ying2v').style.webkitAnimation = 'ying_y_out 1.5s ease both';
+            id('page1').style.webkitAnimation = 'rotate_in_flip_x 1.5s 1.5s ease both';
+            id('ying1h').style.webkitAnimation = 'ying_x_in 1.5s 1.5s ease both';
+            id('ying1v').style.webkitAnimation = 'ying_x_in 1.5s 1.5s ease both';
+            timeout[3] = setTimeout(show2,8000);
+        }
+
+
+        function id(name){
+            return document.getElementById(name);
+        }
+
+
+        //_____________________________________________________
+        //循环显示图片和文字
+        var text_array = []; 
+        var text_length=3;
+        for(var x=0; x<text_length; x++){
+            var text_temp=["\u8fd9\u662f\u548c\u5c0f\u53ef\u7231\u5728\u4e00\u8d77\u540e\u7684\u7b2c\u4e00\u4e2a\u751f\u65e5",
+			"\u6709\u5c0f\u53ef\u7231\u751f\u6d3b\u53c8\u591a\u4e86\u4efd\u6e29\u99a8\u548c\u5feb\u4e50",
+			"\u5f88\u611f\u8c22\u548c\u5c0f\u53ef\u7231\u76f8\u9047\u002c\u6c38\u8fdc\u7231\u4f60",
+		
+			"\u6211\u4e00\u76f4\u90fd\u6ca1\u6709\u6362\u7535\u8bdd\uff0c\u5c31\u662f\u7b49\u4f60\u627e\u6211"][x];
+            if(text_temp!=''&&text_temp!=null){
+                text_array.push(text_temp);
+            }
+        }
+        // console.log(["\u96ea\u68a8\uff0c\u751f\u65e5\u5feb\u4e50\uff0c\u613f\u4f60\u5929\u5929\u5f00\u5fc3\uff0c\u8d8a\u6765\u8d8a\u6f02\u4eae\u54e6","\u4f60\u7684\u5fc3\uff0c\u662f\u6211\u53bb\u5230\u4e16\u754c\u5c3d\u5934\u8fd8\u60f3\u518d\u56de\u6765\u7684\u5730\u65b9","\u7eb5\u7136\u6709\u767e\u4e07\u4e2a\u7406\u7531\u79bb\u5f00\u4f60\uff0c\u6211\u4e5f\u4f1a\u627e\u4e00\u4e2a\u7406\u7531\u4e3a\u4f60\u7559\u4e0b","\u4f60\u4e0d\u7528\u62c5\u5fc3\u6211\u4eec\u5408\u4e0d\u5408\u9002\uff0c\u6211\u767e\u642d","\u6211\u771f\u662f\u4e2a\u5927\u7b28\u86cb\uff0c\u9664\u4e86\u559c\u6b22\u4f60\uff0c\u6211\u4ec0\u4e48\u90fd\u505a\u4e0d\u597d","\u4f60\u7684\u8fc7\u53bb\uff0c\u6211\u6765\u4e0d\u53ca\u53c2\u4e0e\u3002\u4f60\u7684\u5c06\u6765\uff0c\u6211\u5949\u966a\u5230\u5e95","\u6bcf\u6b21\u60f3\u8d77\u4f60\uff0c\u6211\u90fd\u53d1\u73b0\u81ea\u5df1\u662f\u5fae\u7b11\u7740\u7684","\u6211\u672c\u60f3\u6d6a\u8361\u4e00\u751f\uff0c\u5374\u4e0d\u5c0f\u5fc3\u949f\u60c5\u4f60\u4e00\u4eba","\u6211\u505a\u4e8b\u4e09\u5206\u949f\u70ed\u5ea6\uff0c\u5374\u4e5f\u7231\u4f60\u8fd9\u4e48\u4e45","\u65e0\u8bba\u6211\u672c\u4eba\u591a\u4e48\u5e73\u5eb8\uff0c\u6211\u603b\u89c9\u5f97\u5bf9\u4f60\u7684\u7231\u5f88\u7f8e","\u4e0d\u662f\u9664\u4e86\u4f60\uff0c\u6211\u5c31\u6ca1\u4eba\u8981\uff1b\u53ea\u662f\u9664\u4e86\u4f60\uff0c\u6211\u8c01\u90fd\u4e0d\u8981","\u4f60\u662f\u6211\u8fd9\u4e00\u751f\u7b49\u4e86\u534a\u4e16\u672a\u62c6\u7684\u793c\u7269","\u53ea\u7f18\u611f\u541b\u4e00\u56de\u987e\uff0c\u4f7f\u6211\u601d\u541b\u671d\u4e0e\u66ae","\u6211\u4e00\u76f4\u90fd\u6ca1\u6709\u6362\u7535\u8bdd\uff0c\u5c31\u662f\u7b49\u4f60\u627e\u6211"]);
+        console.log(text_array);
+        console.log('text_array.length->'+text_array.length);
+        var text_index=0;
+        var div_text=document.getElementById('div_text');
+        function show_text_loop(){            
+            var str = text_array[text_index];
+            console.log('str->'+str);
+            if(str==''||str==false||str==null){
+                str='…';
+            }
+            var array_str=str.split('');
+            for(var i=0; i<array_str.length; i++){
+                type_words(str,i);
+            }
+            text_index++;
+            if(text_index>text_array.length-1){
+                text_index=0;
+            }
+        }        
+        function type_words(str,i){
+            // console.log('type_words->'+str+' i->'+i);
+            setTimeout(function(){
+                div_text.innerHTML=str.slice(0, i+1);
+            },i*200);
+        }         
+
+
+    </script>
+
+
+
+
+
+
+
+    <script src="./res/jquery.eraser.js"></script>
+
+    <script type="text/javascript" src="./res/jscex.min.js"></script>
+    <script type="text/javascript" src="./res/jscex-parser.js"></script>
+    <script type="text/javascript" src="./res/jscex-jit.js"></script>
+    <script type="text/javascript" src="./res/jscex-builderbase.min.js"></script>
+    <script type="text/javascript" src="./res/jscex-async.min.js"></script>
+    <script type="text/javascript" src="./res/jscex-async-powerpack.min.js"></script>
+    <script type="text/javascript" src="./res/functions.js" charset="utf-8"></script> 
+    <script type="text/javascript" src="./res/love.js" charset="utf-8"></script>
+
+    <!-- <script src="http://upublic.jiatuma.com/start_play/pixels_words/pixels_main.js"></script> -->
+
+    <script>       
+        $(function(){
+            //此事件为触发互动创意
+            var start_id='2';
+            init_creative(start_id);
+        });
+        
+        function init_creative(start_id){
+            console.log('init_creative->'+start_id);
+            if(start_id=='1'){
+                $('.dowebok').show();
+                init_eraser();
+            }else if(start_id=='2'){
+                $('#div_tree_play').show();
+                init_tree();
+            }
+            // else if(start_id=='3'){
+            //     $('#div_pixels_play').show();
+            //     init_pixels();
+            // }
+            if(start_id=='0'){
+                init_play(); 
+            }            
+        }        
+
+
+
+        //开始动画主体部分
+        function init_play(){            
+            showtitle();
+            load_images();
+            $('#div_start_bg').fadeOut(1500); 
+        }
+
+
+
+        //以下是擦除公式的js__________________________________
+        function init_eraser(){
+            console.log('init_eraser');
+            // lazy_load('css','http://upublic.jiatuma.com/start_play/formula/formula.css');
+            // lazy_load('js','http://upublic.jiatuma.com/start_play/formula/jquery.eraser.js');
+            $('#redux').eraser({
+                size: 130,   //设置橡皮擦大小
+                completeRatio: .14, //设置擦除面积比例
+                completeFunction: got_answer,   //大于擦除面积比例触发函数
+                progressFunction: function(p){ //擦除过程中触发函数
+                    // $('#progress').html(Math.round(p*100) + '%');
+                    console.log('the pic was erased '+Math.round(p*100)+'%');
+                }
+            });
+
+            $('#span_show_tips').click(function(){
+                $("#span_tips").toggle();
+            });
+        }
+
+        function got_answer(){
+            console.log('got_answer');            
+            // $('#redux').eraser('reset');
+            $('#redux').hide();
+            $('#span_show_tips').hide();
+            $('#span_tips').html('多谢你帮我解开了这个难题，<br>很高兴看到你给我的答案。<br>I love you, too!<br><br>接下来还有惊喜给你，准备好了吗？<br>点这里继续').show();
+            console.log('i am trigger, i am going to play next');
+            $('#span_tips').css("z-index", "888");
+            $("#span_tips").click(function(){
+                init_play(); 
+                $('.dowebok').remove();
+            }); 
+        }
+
+        
+
+        //以下是树的js____________________________________________
+        var bool_jump=true;
+
+        function init_tree(){
+            console.log('init_tree');
+            // lazy_load('css','http://upublic.jiatuma.com/start_play/tree_love/tree_main.css');
+            // lazy_load('js','http://upublic.jiatuma.com/start_play/tree_love/tree_main.css');
+            var canvas_tree = $('#canvas_tree');            
+            if (!canvas_tree[0].getContext) {
+                $("#error").show();
+                return false; 
+            }
+
+            var width = canvas_tree.width();
+            var height = canvas_tree.height();        
+            canvas_tree.attr("width", width);
+            canvas_tree.attr("height", height);
+
+            var opts = {
+                seed: {
+                    // x: width / 2 - 20, //画布宽度的一半减去20
+                    // y: height / 2 - 20, //画布高度的一半减去20
+                    color: "rgb(190, 26, 37)",
+                    scale: 2
+                },
+                //第1层是1个，第2层是9个，第3层是5个，第4层都是9个或8个
+                //其实以下只是不同层级的树干，结构一样为
+                //point1为[0,1], point2为[2,3], point3为[4,5], radius为[6], length为[7], branchs为下一层级
+                branch: [
+                    [235, 815, 270, 385, 200, 335, 30, 100, [
+                        [240, 615, 155, 502, 80, 510, 13, 100, [ //左下的树干
+                            [180, 550, 154, 525, 144, 510, 2, 40] //左下树干的树枝
+                        ]],
+                        [250, 580, 300, 491, 380, 480, 12, 100, [ //右下树干
+                            [278, 535, 348, 544, 361, 561, 3, 80] //右下树干的树枝
+                        ]],
+                        [235, 416, 237, 383, 234, 352, 3, 40], //中间的小树干
+                        [246, 532, 113, 382, 48, 379, 9, 80, [ //左上的树干
+                            [134, 421, 93, 388, 81, 338, 2, 40], //左上树干的上树枝
+                            [198, 480, 135, 450, 95, 465, 4, 60] //左上树干的下树枝
+                        ]],
+                        [246, 492, 308, 387, 378, 356, 6, 100, [ //右上的树干
+                            [290, 428, 346, 412, 348, 406, 2, 80] //右上树干的树枝
+                        ]]
+                    ]] 
+                ],
+                bloom: {
+                    num: 700,
+                    width: 500,
+                    height: 880,
+                },
+                footer: {
+                    width: 500,
+                    height: 30,
+                    speed: 5,
+                }
+            }
+
+            var tree = new Tree(canvas_tree[0], width, height, opts); //实例化tree对象
+            var seed = tree.seed;
+            var foot = tree.footer;
+            var hold = 1;
+
+            $('#div_tree_start').click(function(e){
+                var offset = canvas_tree.offset(); //默认都是0 
+                var x; 
+                var y;
+                x = e.pageX - offset.left;
+                y = e.pageY - offset.top;
+                // console.log('offset.left->'+offset.left+'  offset.top->'+offset.top);
+                // console.log('e.pageX->'+e.pageX+'  e.pageX->'+e.pageY);
+                // console.log('x->'+x+'  y->'+y);                
+                hold = 0; //关键的一步作为触发
+                canvas_tree.unbind("click"); 
+                canvas_tree.unbind("mousemove");
+                canvas_tree.removeClass('hand'); 
+                $('#div_tree_start').remove();               
+            });
+
+            var seedAnimate = eval(Jscex.compile("async", function () {            
+                seed.draw(); //这里就完成了初始化的界面了，显示一个心形
+                while (hold) { //如果为0就执行
+                    $await(Jscex.Async.sleep(10));
+                }            
+                while (seed.canScale()) { //seed.canScale()从一开始就是true
+                    seed.scale(0.95);
+                    $await(Jscex.Async.sleep(10));
+                }
+                while (seed.canMove()) {
+                    seed.move(0, 2);
+                    foot.draw();
+                    $await(Jscex.Async.sleep(10));
+                }
+            }));
+
+            var growAnimate = eval(Jscex.compile("async", function () {
+                do {
+                    tree.grow();
+                    $await(Jscex.Async.sleep(10));
+                } while (tree.canGrow());
+            }));
+
+            var flowAnimate = eval(Jscex.compile("async", function () {
+                do {
+                    tree.flower(2);
+                    $await(Jscex.Async.sleep(10));
+                } while (tree.canFlower());
+            }));
+
+            var moveAnimate = eval(Jscex.compile("async", function () {
+                tree.snapshot("p1", 0, 0, 610, 815); //function(k, x, y, width, height)
+                while (tree.move("p1", 130, 0)) {
+                    foot.draw();
+                    $await(Jscex.Async.sleep(10));
+                }
+                foot.draw();
+                tree.snapshot("p2", 130, 0, 610, 815);
+
+                // 会有闪烁不得意这样做, (＞﹏＜)
+                canvas_tree.parent().css("background", "url(" + tree.toDataURL('image/png') + ")");
+                canvas_tree.css("background", "#ffe");
+                $await(Jscex.Async.sleep(300));
+                canvas_tree.css("background", "none");
+            }));
+
+            var jumpAnimate = eval(Jscex.compile("async", function () {
+                var ctx = tree.ctx;
+                while (bool_jump) {
+                    tree.ctx.clearRect(0, 0, width, height);
+                    tree.jump();
+                    // foot.draw();
+                    $await(Jscex.Async.sleep(25));
+                }
+            }));
+
+            var textAnimate = eval(Jscex.compile("async", function () {
+                $("#div_tree_text").show();
+                $("#div_tree_type").show();
+                tree_show_text();
+
+                // $("#clock-box").fadeIn(500);
+                while (bool_jump) {
+                    // tree_time_elapse(timestamp_last);
+                    $await(Jscex.Async.sleep(1000));
+                }
+            }));
+
+            var runAsync = eval(Jscex.compile("async", function () {
+                $await(seedAnimate());
+                $await(growAnimate());
+                $await(flowAnimate());
+                $await(moveAnimate());
+                textAnimate().start();
+                $await(jumpAnimate());
+            }));
+
+            runAsync().start();
+        }
+
+        function tree_show_text(){
+            var str = '甜甜，很庆幸能遇见你，于千万年之中，时间的荒野里，没有早一步，也没有晚一步。刚巧赶上，想对你说一声，感谢遇到你，永远爱你';
+            // var str = '如果我不换行是不是一下就打完了，如果我不换行是不是一下就打完了如果我不换行是不是一下就打完了如果我不换行是不是一下就打完了如果我不换行是不是一下就打完了如果我不换行是不是一下就打完了如果我不换行是';
+            var array_str=str.split('');
+            // console.log('array_str.length->'+array_str.length);
+            for(var i=0; i<array_str.length; i++){
+                tree_type_words(str,i);
+            } 
+            setTimeout(function(){
+                bool_jump=false;
+                $('#div_tree_play').remove();
+                init_play(); 
+            },array_str.length*150+2500);
+        }
+        function tree_type_words(str,i){
+            // console.log('tree_type_words->'+str+' i->'+i);
+            setTimeout(function(){
+                div_tree_type.innerHTML=str.slice(0, i+1);
+            },i*150);
+        }
+
+
+
+
+        //以下是像素字的js____________________________________________________        
+        // function init_pixels(){ 
+        //     // lazy_load('css','http://upublic.jiatuma.com/start_play/pixels_words/pixels_style.css');
+        //     var pixels_text='甜甜，很庆幸能遇见你，于千万年之中，时间的荒野里，没有早一步，也没有晚一步。刚巧赶上，想对你说一声，很高兴认识你';
+        //     console.log('init_pixels->'+pixels_text);
+        //     // pixels_text='亲爱的|我爱你|生日快乐|么么哒|#countdown 3|';
+        //     pixels_text+='#icon heart||#countdown 3';
+        //     // console.log(pixels_text);
+        //     S.init(pixels_text); 
+        // } 
+
+        // function pixels_play_end(time_to_go){
+        //     setTimeout(function(){
+        //         $('#div_pixels_play').remove();
+        //         init_play();
+        //     },2000*time_to_go);
+        // }
+        
+
+    </script>
+    
+
+
+</body></html>

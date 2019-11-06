@@ -1,0 +1,87 @@
+
+#div_play_container>#div_tree_play{
+	display: none;
+	width:100%;
+	position: relative;
+	z-index: 666;
+	background:#ffe;
+}
+#div_tree_main{
+	/*border: 1px solid;*/
+	/*border-color: black;*/
+	position:relative;
+	width:500px; height:815px;
+	margin-top:0px;
+}
+#canvas_tree{
+	width:500px; height:815px;
+}
+
+
+
+#div_tree_text{
+	display:none;
+	/*width:420px; */
+	/*padding: 20px;*/
+	left:40px; top:25px;
+	position:absolute;
+	font-size:22px;	
+	/*background-color: rgba(255,255,255,0.3);*/
+}
+#div_tree_type{
+	width:420px; 
+	display:none;
+}
+#clock-box {
+	width:420px; 
+	color: #DC143C;
+	display:none;
+}
+#clock {
+	/*color: red;*/
+	font-weight: bold;
+}
+
+
+#error{
+	margin:0 auto;
+	text-align:center;
+	margin-top:60px;
+	display:none;
+}
+.hand{
+	cursor:pointer;
+}
+.say{
+	margin-left:5px;
+}
+.space{
+	margin-right:150px;
+}
+
+
+
+#div_tree_start{
+	width: 500px;
+	height: 815px;
+	position: absolute;
+	left: 0px; top: 0px;
+	z-index: 667;
+	background-color: rgba(255,255,255,0);
+}
+
+#div_xy {
+    width: 5px; height: 5px;
+    border-radius: 3px;
+    background-color: green;
+    position: absolute;
+    left: 200px; top: 400px;
+    z-index: 668;
+}
+#div_input{
+    position: fixed;
+    left: 100px;
+    z-index: 668;
+}
+
+
